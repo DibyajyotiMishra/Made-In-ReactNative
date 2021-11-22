@@ -10,6 +10,7 @@ Steps to clone the project.
 2. cd PhilzCofee/
 3. npm install or yarn install
 4. cd ios && pod install && cd ..
-5. yarn ios
+5. npx react-native link
+6. yarn ios
 
 Made with ❤️ in ReactNative.
