@@ -2,6 +2,8 @@
 
 Spliz Cofee HomeScreen UI including the scrollviews and gesturehandlers.
 
+<img src="https://github.com/DibyajyotiMishra/Made-In-ReactNative/blob/develop/PhilzCoffee/src/assets/giphy.gif" width=250 height="500" />
+
 
 
 Steps to clone the project.
