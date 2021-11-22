@@ -1,4 +1,4 @@
-# Made-In-ReactNative
+# SphilzCoffee: Made-In-ReactNative
 
 Spliz Cofee HomeScreen UI including the scrollviews and gesturehandlers.
 
