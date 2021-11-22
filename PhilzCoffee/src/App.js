@@ -17,7 +17,7 @@ const PhilzCoffee = () => {
     <View style={{flex: 1}}>
       <ScrollView bounces={false} showsVerticalScrollIndicator={false}>
         <View style={styles.slider}>
-          <ScrollView horizontal>
+          <ScrollView decelerationRate={false} snapToInterval={width} showsHorizontalScrollIndicator={false} horizontal>
             {products.map((product, index) => (
               <Card product={product} key={index} />
             ))}
