@@ -1,112 +1,95 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
-
 import React from 'react';
-import type {Node} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import {StyleSheet, View} from 'react-native';
+import Svg, {Circle, Defs, G, Mask} from 'react-native-svg';
+import Animated, {
+  useAnimatedProps,
+  useSharedValue,
+} from 'react-native-reanimated';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import Quadrant, {
+  STROKE_WIDTH,
+  RADIUS,
+  center,
+  DIGITS,
+  PADDING,
+} from './Quadrant';
+import Gesture from './Gesture';
+import Title from './Title';
+import Status from './Status';
+import {transformOrigin} from 'react-native-redash';
 
-const Section = ({children, title}): Node => {
-  const isDarkMode = useColorScheme() === 'dark';
+const AnimatedCircle = Animated.createAnimatedComponent(Circle);
+const AnimatedG = Animated.createAnimatedComponent(G);
+const styles = StyleSheet.create({
+  container: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'white',
+  },
+});
+
+const Digit = ({cx, cy, i}) => {
   return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
+    <Circle
+      key={i}
+      cx={cx}
+      cy={cy}
+      r={STROKE_WIDTH / 2 - PADDING}
+      fill="white"
+    />
+  );
+};
+
+const App = () => {
+  const passcode = useSharedValue('');
+  const r = RADIUS - STROKE_WIDTH / 2;
+  const circumference = 2 * Math.PI * r;
+  const theta = useSharedValue(0);
+  const animatedProps = useAnimatedProps(() => ({
+    transform: transformOrigin(center, [{rotate: `${-theta.value}rad`}]),
+  }));
+  const groupAnimatedProps = useAnimatedProps(() => ({
+    transform: transformOrigin(center, [{rotate: `${-theta.value}rad`}]),
+  }));
+  console.log(passcode.value);
+  return (
+    <View style={{flex: 1}}>
+      <Svg style={styles.container}>
+        <Defs>
+          <Mask id="mask">
+            <AnimatedG animatedProps={groupAnimatedProps}>
+              {DIGITS.slice(0, 10).map(({x, y}, i) => (
+                <Digit key={i} i={i} cx={x} cy={y} />
+              ))}
+            </AnimatedG>
+          </Mask>
+        </Defs>
+        <Quadrant />
+        <Circle
+          fill="white"
+          cx={center.x}
+          cy={center.y}
+          r={RADIUS - STROKE_WIDTH}
+        />
+        <AnimatedCircle
+          cx={center.x}
+          cy={center.y}
+          r={r}
+          strokeWidth={STROKE_WIDTH - PADDING}
+          stroke="white"
+          strokeDasharray={[circumference, circumference]}
+          strokeDashoffset={-0.305 * circumference}
+          strokeLinecap="round"
+          animatedProps={animatedProps}
+        />
+        <Title />
+        <Status passcode={passcode} />
+        <G mask="url(#mask)">
+          <Quadrant />
+        </G>
+      </Svg>
+      <Gesture theta={theta} passcode={passcode} />
     </View>
   );
 };
-
-const App: () => Node = () => {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.js</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-};
-
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
 
 export default App;
